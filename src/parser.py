@@ -24,6 +24,11 @@ class Parser:
             if self.check(TokenType.NEWLINE):
                 self.advance()  # Skip newlines
                 continue
+            if self.check(TokenType.INDENT):
+                # Skip INDENT tokens that appear before declarations
+                # (These should only appear after block-starting keywords)
+                self.advance()
+                continue
             statements.append(self.declaration())
         return statements
     
@@ -43,6 +48,9 @@ class Parser:
     
     def var_declaration(self, is_const: bool) -> Stmt:
         """Parse a variable declaration."""
+        # Skip any INDENT tokens that might appear (e.g., after comments)
+        while self.check(TokenType.INDENT):
+            self.advance()
         name = self.consume(TokenType.IDENTIFIER, "Expected variable name").lexeme
         self.consume(TokenType.EQUAL, "Expected '=' after variable name")
         initializer = self.expression()

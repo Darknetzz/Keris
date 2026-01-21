@@ -16,7 +16,9 @@ from .runtime import RuntimeError
 
 app = typer.Typer(
     name="keris",
-    help="Keris Programming Language - A general-purpose, dynamically-typed, interpreted programming language inspired by Python.",
+    help="Keris Programming Language - A general-purpose, dynamically-typed, interpreted programming language inspired by Python.\n\n"
+         "📚 Documentation: https://github.com/Darknetzz/Keris\n"
+         "🐙 GitHub: https://github.com/Darknetzz/Keris",
     add_completion=False,
 )
 console = Console()
@@ -110,10 +112,13 @@ def main(
     Keris Programming Language Interpreter
     
     Run a Keris script file or start an interactive REPL.
+    
+    📚 Documentation: https://github.com/Darknetzz/Keris
+    🐙 GitHub: https://github.com/Darknetzz/Keris
     """
     if version:
         console.print(f"[bold cyan]Keris v{VERSION}[/bold cyan]")
-        raise typer.Exit()
+        sys.exit(0)
     
     if script:
         run_file(script)
@@ -121,5 +126,15 @@ def main(
         run_prompt()
 
 
+def cli() -> None:
+    """CLI entry point that handles typer exceptions gracefully."""
+    try:
+        app()
+    except typer.Exit:
+        # Typer.Exit is raised for normal exits (like --help, --version)
+        # This is expected behavior, so we exit cleanly
+        sys.exit(0)
+
+
 if __name__ == "__main__":
-    app()
+    cli()

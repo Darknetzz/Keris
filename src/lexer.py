@@ -50,6 +50,32 @@ class Lexer:
         saved_current = self.current
         saved_column = self.column
         
+        # First, check if this line starts with a comment (before counting spaces)
+        # This handles comments at the very start of a line
+        if not self.is_at_end() and self.peek() == '#':
+            # Comment-only line (#) at start, treat as empty
+            while not self.is_at_end() and self.peek() != '\n':
+                self.advance()
+            if not self.is_at_end() and self.peek() == '\n':
+                self.line += 1
+                self.column = 1
+                self.advance()
+            self.pending_indent = True
+            return
+        
+        # Check for // comment at start of line
+        if not self.is_at_end() and self.current < len(self.source) - 1:
+            if self.source[self.current:self.current + 2] == '//':
+                # Comment-only line (//) at start, treat as empty
+                while not self.is_at_end() and self.peek() != '\n':
+                    self.advance()
+                if not self.is_at_end() and self.peek() == '\n':
+                    self.line += 1
+                    self.column = 1
+                    self.advance()
+                self.pending_indent = True
+                return
+        
         # Count leading spaces (tabs are not allowed for indentation)
         while not self.is_at_end():
             char = self.peek()
@@ -70,17 +96,21 @@ class Lexer:
                 # Non-whitespace character found
                 break
         
-        # If we hit EOF or a comment-only line, reset
+        # If we hit EOF, reset
         if self.is_at_end():
             self.current = saved_current
             self.column = saved_column
             return
         
-        # Check if this line is only whitespace/comments
+        # Check if this line is only whitespace/comments (after indentation)
         peek_pos = self.current
-        while peek_pos < len(self.source) and self.source[peek_pos] not in '\n\r':
+        while peek_pos < len(self.source) and self.source[peek_pos] in ' \t':
+            peek_pos += 1
+        
+        # Check for comment after indentation
+        if peek_pos < len(self.source):
             if self.source[peek_pos] == '#':
-                # Comment-only line, treat as empty
+                # Comment-only line (#), treat as empty
                 while peek_pos < len(self.source) and self.source[peek_pos] != '\n':
                     peek_pos += 1
                 self.current = peek_pos
@@ -90,13 +120,30 @@ class Lexer:
                     self.current += 1
                 self.pending_indent = True
                 return
-            if self.source[peek_pos] not in ' \t':
-                break
-            peek_pos += 1
+            elif peek_pos < len(self.source) - 1 and self.source[peek_pos:peek_pos + 2] == '//':
+                # Comment-only line (//), treat as empty
+                while peek_pos < len(self.source) and self.source[peek_pos] != '\n':
+                    peek_pos += 1
+                self.current = peek_pos
+                if peek_pos < len(self.source) and self.source[peek_pos] == '\n':
+                    self.line += 1
+                    self.column = 1
+                    self.current += 1
+                self.pending_indent = True
+                return
         
         current_indent = self.indent_stack[-1]
         
-        if indent_level > current_indent:
+        # Only generate INDENT/DEDENT tokens if indentation actually changed
+        # If indent_level == current_indent, we don't need any tokens
+        # (This happens when we're at the same indentation level, like after a comment)
+        # Note: We should NOT generate INDENT tokens for statements like 'let', 'const', etc.
+        # Only for block-starting statements like 'if', 'while', 'for', 'def', etc.
+        # IMPORTANT: When indent_level == current_indent, we should NOT generate any tokens
+        if indent_level == current_indent:
+            # Same indentation level - no tokens needed
+            pass
+        elif indent_level > current_indent:
             # Indent increased
             self.indent_stack.append(indent_level)
             self.tokens.append(Token(
@@ -154,15 +201,18 @@ class Lexer:
                 # Single-line comment (//)
                 while self.peek() != '\n' and not self.is_at_end():
                     self.advance()
+                # Don't add token for comments - they're ignored
             elif self.match('*'):
                 # Multi-line comment
                 self.scan_multiline_comment()
+                # Don't add token for comments - they're ignored
             else:
                 self.add_token(TokenType.SLASH)
         elif char == '#':
             # Single-line comment (#)
             while self.peek() != '\n' and not self.is_at_end():
                 self.advance()
+            # Don't add token for comments - they're ignored
         elif char == '%':
             self.add_token(TokenType.PERCENT)
         elif char == '!':
