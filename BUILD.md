@@ -2,18 +2,22 @@
 
 ## Quick Build
 
-Build the executable using pybin:
+1. Install PyInstaller:
+   ```bash
+   pip install pyinstaller
+   ```
 
-```bash
-python build_exe.py
-```
+2. Build the executable:
+   ```bash
+   python build_exe.py
+   ```
+   
+   Or directly:
+   ```bash
+   pyinstaller --name=keris --onefile --console --clean main.py
+   ```
 
-Or directly:
-```bash
-D:/Bin/!custombins/pybin.exe --name=keris --onefile --console --clean main.py
-```
-
-The executable will be created at `dist/keris.exe`
+3. The executable will be created at `dist/keris.exe`
 
 ## Usage
 
@@ -27,14 +31,20 @@ dist\keris.exe
 dist\keris.exe examples\hello.ks
 ```
 
-## Build Options
+## Alternative: Manual PyInstaller Command
 
-The build script uses the following options:
+If you prefer to run PyInstaller directly:
+
+```bash
+pyinstaller --name=keris --onefile --console --clean main.py
+```
+
+### Options Explained
 
 - `--name=keris`: Sets the output executable name to `keris.exe`
 - `--onefile`: Creates a single executable file (easier to distribute)
 - `--console`: Keeps the console window (needed for REPL)
-- `--clean`: Cleans cache before building
+- `--clean`: Cleans PyInstaller cache before building
 
 ## Distribution
 

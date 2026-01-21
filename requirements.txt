@@ -1,3 +1,2 @@
 # Build dependencies
-# Using custom pybin.exe at D:/Bin/!custombins/pybin.exe
-# No pip packages required for building
+pyinstaller>=6.0.0
