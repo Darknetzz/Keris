@@ -20,7 +20,11 @@ A general-purpose, dynamically-typed, interpreted programming language inspired 
 
 ## Installation
 
-Keris is implemented in Python 3.7+. No additional dependencies required.
+Keris is implemented in Python 3.7+. Install dependencies with:
+
+```bash
+pip install -r requirements.txt
+```
 
 ```bash
 # Clone or download the repository
