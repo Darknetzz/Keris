@@ -6,9 +6,11 @@ and are automatically registered in the global environment.
 """
 
 import math as py_math
+import random
 from typing import Any, List, Dict
 
 
+# ──────────────────────────── FUNCTION: create_stdlib ─────────────────────────────── #
 def create_stdlib() -> Dict[str, Any]:
     """Create and return the standard library.
     
@@ -22,6 +24,7 @@ def create_stdlib() -> Dict[str, Any]:
     # I/O Functions
     # ============================================================================
     
+    # ──────────────────────────── FUNCTION: print_func ─────────────────────────────── #
     def print_func(*args):
         """Print values to stdout.
         
@@ -38,6 +41,7 @@ def create_stdlib() -> Dict[str, Any]:
         print(*args)
         return None
     
+    # ──────────────────────────── FUNCTION: read_line_func ─────────────────────────────── #
     def read_line_func():
         """Read a line from stdin.
         
@@ -56,6 +60,7 @@ def create_stdlib() -> Dict[str, Any]:
         except EOFError:
             return ""
     
+    # ──────────────────────────── FUNCTION: read_number_func ─────────────────────────────── #
     def read_number_func():
         """Read a number from stdin.
         
@@ -84,6 +89,7 @@ def create_stdlib() -> Dict[str, Any]:
     # Math Module
     # ============================================================================
     
+    # ──────────────────────────── FUNCTION: math_abs ─────────────────────────────── #
     def math_abs(x):
         """Return the absolute value of a number.
         
@@ -95,6 +101,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return abs(x)
     
+    # ──────────────────────────── FUNCTION: math_sqrt ─────────────────────────────── #
     def math_sqrt(x):
         """Return the square root of a number.
         
@@ -106,6 +113,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return py_math.sqrt(x)
     
+    # ──────────────────────────── FUNCTION: math_pow ─────────────────────────────── #
     def math_pow(x, y):
         """Return x raised to the power of y.
         
@@ -118,6 +126,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return x ** y
     
+    # ──────────────────────────── FUNCTION: math_max ─────────────────────────────── #
     def math_max(*args):
         """Return the maximum value from the given arguments.
         
@@ -129,6 +138,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return max(args) if args else None
     
+    # ──────────────────────────── FUNCTION: math_min ─────────────────────────────── #
     def math_min(*args):
         """Return the minimum value from the given arguments.
         
@@ -140,6 +150,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return min(args) if args else None
     
+    # ──────────────────────────── FUNCTION: math_floor ─────────────────────────────── #
     def math_floor(x):
         """Return the floor of a number (largest integer <= x).
         
@@ -151,6 +162,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return py_math.floor(x)
     
+    # ──────────────────────────── FUNCTION: math_ceil ─────────────────────────────── #
     def math_ceil(x):
         """Return the ceiling of a number (smallest integer >= x).
         
@@ -162,6 +174,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return py_math.ceil(x)
     
+    # ──────────────────────────── FUNCTION: math_round ─────────────────────────────── #
     def math_round(x):
         """Round a number to the nearest integer.
         
@@ -173,6 +186,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return round(x)
     
+    # ──────────────────────────── FUNCTION: math_sin ─────────────────────────────── #
     def math_sin(x):
         """Return the sine of x (in radians).
         
@@ -184,6 +198,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return py_math.sin(x)
     
+    # ──────────────────────────── FUNCTION: math_cos ─────────────────────────────── #
     def math_cos(x):
         """Return the cosine of x (in radians).
         
@@ -195,6 +210,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return py_math.cos(x)
     
+    # ──────────────────────────── FUNCTION: math_tan ─────────────────────────────── #
     def math_tan(x):
         """Return the tangent of x (in radians).
         
@@ -228,6 +244,7 @@ def create_stdlib() -> Dict[str, Any]:
     # String Module
     # ============================================================================
     
+    # ──────────────────────────── FUNCTION: str_len ─────────────────────────────── #
     def str_len(s: str) -> int:
         """Return the length of a string.
         
@@ -242,6 +259,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return len(s)
     
+    # ──────────────────────────── FUNCTION: str_upper ─────────────────────────────── #
     def str_upper(s: str) -> str:
         """Convert a string to uppercase.
         
@@ -256,6 +274,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return s.upper()
     
+    # ──────────────────────────── FUNCTION: str_lower ─────────────────────────────── #
     def str_lower(s: str) -> str:
         """Convert a string to lowercase.
         
@@ -270,6 +289,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return s.lower()
     
+    # ──────────────────────────── FUNCTION: str_split ─────────────────────────────── #
     def str_split(s: str, delimiter: str = None) -> List:
         """Split a string into a list of substrings.
         
@@ -288,6 +308,7 @@ def create_stdlib() -> Dict[str, Any]:
             delimiter = " "
         return s.split(delimiter)
     
+    # ──────────────────────────── FUNCTION: str_join ─────────────────────────────── #
     def str_join(lst: List, delimiter: str = "") -> str:
         """Join a list of values into a single string.
         
@@ -317,6 +338,7 @@ def create_stdlib() -> Dict[str, Any]:
     # List Module
     # ============================================================================
     
+    # ──────────────────────────── FUNCTION: list_append ───────────────────────────── #
     def list_append(lst: List, item: Any) -> None:
         """Append an item to the end of a list.
         
@@ -336,6 +358,7 @@ def create_stdlib() -> Dict[str, Any]:
         lst.append(item)
         return None
     
+    # ──────────────────────────── FUNCTION: list_pop ─────────────────────────────── #
     def list_pop(lst: List) -> Any:
         """Remove and return the last item from a list.
         
@@ -355,6 +378,7 @@ def create_stdlib() -> Dict[str, Any]:
             return None
         return lst.pop()
     
+    # ──────────────────────────── FUNCTION: list_len ───────────────────────────── #
     def list_len(lst: List) -> int:
         """Return the length (number of elements) of a list.
         
@@ -369,6 +393,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return len(lst)
     
+    # ──────────────────────────── FUNCTION: list_contains ─────────────────────── #
     def list_contains(lst: List, item: Any) -> bool:
         """Check if a list contains a specific item.
         
@@ -384,18 +409,58 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return item in lst
     
+    # ────────────────────────── FUNCTION: list_shuffle ────────────────────────── #
+    def list_shuffle(lst: List) -> None:
+        """Shuffle the elements of a list.
+        
+        Modifies the list in-place by shuffling the elements randomly.
+        
+        Args:
+            lst (list): The list to shuffle.
+        
+        Returns:
+            None: Always returns nil.
+        
+        Example:
+            let numbers = [1, 2, 3, 4, 5]
+            list.shuffle(numbers)  // Randomly reorders the list
+        """
+        random.shuffle(lst)
+        return None
+    
+    # ────────────────────────── FUNCTION: list_sort ────────────────────────── #
+    def list_sort(lst: List) -> None:
+        """Sort the elements of a list.
+        
+        Modifies the list in-place by sorting the elements in ascending order.
+        
+        Args:
+            lst (list): The list to sort.
+        
+        Returns:
+            None: Always returns nil.
+        
+        Example:
+            let numbers = [3, 1, 4, 1, 5]
+            list.sort(numbers)  // numbers is now [1, 1, 3, 4, 5]
+        """
+        lst.sort()
+        return None
+    
     list_module = {
         "append": list_append,
         "pop": list_pop,
         "len": list_len,
         "contains": list_contains,
+        "shuffle": list_shuffle,
+        "sort": list_sort,
     }
     stdlib["list"] = list_module
-    
     # ============================================================================
     # Dictionary Module
     # ============================================================================
     
+    # ──────────────────────────── FUNCTION: dict_keys ─────────────────────────── #
     def dict_keys(d: Dict) -> List:
         """Return a list of all keys in a dictionary.
         
@@ -410,6 +475,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return list(d.keys())
     
+    # ──────────────────────────── FUNCTION: dict_values ─────────────────────────── #
     def dict_values(d: Dict) -> List:
         """Return a list of all values in a dictionary.
         
@@ -424,6 +490,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return list(d.values())
     
+    # ──────────────────────────── FUNCTION: dict_len ───────────────────────────── #
     def dict_len(d: Dict) -> int:
         """Return the number of key-value pairs in a dictionary.
         
@@ -438,6 +505,7 @@ def create_stdlib() -> Dict[str, Any]:
         """
         return len(d)
     
+    # ──────────────────────────── FUNCTION: dict_contains ─────────────────────── #
     def dict_contains(d: Dict, key: Any) -> bool:
         """Check if a dictionary contains a specific key.
         
@@ -465,6 +533,7 @@ def create_stdlib() -> Dict[str, Any]:
     # Type Module
     # ============================================================================
     
+    # ───────────────────────────── FUNCTION: typeof ───────────────────────────── #
     def typeof(value: Any) -> str:
         """Get the type name of a value.
         
@@ -513,6 +582,7 @@ def create_stdlib() -> Dict[str, Any]:
     # Range Function
     # ============================================================================
     
+    # ───────────────────────────── FUNCTION: range_func ─────────────────────────────── #
     def range_func(start: int, end: int = None, step: int = 1) -> List:
         """Create a range of numbers.
         

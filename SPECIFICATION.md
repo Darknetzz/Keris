@@ -357,6 +357,8 @@ list.append([1, 2], 3)
 list.pop([1, 2, 3])
 list.len([1, 2, 3])
 list.contains([1, 2, 3], 2)
+list.shuffle([1, 2, 3, 4, 5])  // Randomly reorders the list
+list.sort([3, 1, 4, 1, 5])     // Sorts the list in ascending order
 ```
 
 ### Dict

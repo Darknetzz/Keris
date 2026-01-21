@@ -256,6 +256,9 @@ print(numbers)  // [10, 2, 3, 4, 5]
 
 print(list.len(numbers))  // 5
 print(list.contains(numbers, 3))  // true
+
+list.shuffle(numbers)  // Randomly reorders the list
+list.sort(numbers)     // Sorts the list in ascending order
 ```
 
 ### Dictionaries

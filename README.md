@@ -168,6 +168,8 @@ list.append(lst, 4)      # [1, 2, 3, 4]
 list.pop(lst)            # 4
 list.len(lst)            # 3
 list.contains(lst, 2)    # true
+list.shuffle(lst)        # Randomly reorders the list
+list.sort(lst)           # Sorts the list in ascending order
 ```
 
 ### Dict
