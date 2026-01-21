@@ -65,6 +65,8 @@ class TokenType(Enum):
     
     # Special
     NEWLINE = auto()
+    INDENT = auto()
+    DEDENT = auto()
     EOF = auto()
 
 

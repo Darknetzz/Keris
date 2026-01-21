@@ -14,18 +14,107 @@ class Lexer:
         self.line = 1
         self.column = 1
         self.start_column = 1
+        self.indent_stack = [0]  # Track indentation levels (in spaces)
+        self.pending_indent = True  # Track if we're at the start of a line
     
     def scan_tokens(self) -> list[Token]:
         """Scan the source code and return a list of tokens."""
         while not self.is_at_end():
+            # Handle indentation at the start of a line
+            if self.pending_indent:
+                self.handle_indentation()
+            
+            if self.is_at_end():
+                break
+                
             self.start = self.current
             self.start_column = self.column
             self.scan_token()
+        
+        # Generate any remaining DEDENT tokens
+        while len(self.indent_stack) > 1:
+            self.indent_stack.pop()
+            self.tokens.append(Token(
+                TokenType.DEDENT, "", None, self.line, self.column
+            ))
         
         self.tokens.append(Token(
             TokenType.EOF, "", None, self.line, self.column
         ))
         return self.tokens
+    
+    def handle_indentation(self):
+        """Handle indentation at the start of a line."""
+        self.pending_indent = False
+        indent_level = 0
+        saved_current = self.current
+        saved_column = self.column
+        
+        # Count leading spaces (tabs are not allowed for indentation)
+        while not self.is_at_end():
+            char = self.peek()
+            if char == ' ':
+                indent_level += 1
+                self.advance()
+            elif char == '\t':
+                raise SyntaxError(
+                    f"Tabs are not allowed for indentation. Use spaces instead at line {self.line}, column {self.column}"
+                )
+            elif char == '\n':
+                # Empty line, skip it
+                self.line += 1
+                self.column = 1
+                self.advance()
+                continue
+            else:
+                # Non-whitespace character found
+                break
+        
+        # If we hit EOF or a comment-only line, reset
+        if self.is_at_end():
+            self.current = saved_current
+            self.column = saved_column
+            return
+        
+        # Check if this line is only whitespace/comments
+        peek_pos = self.current
+        while peek_pos < len(self.source) and self.source[peek_pos] not in '\n\r':
+            if self.source[peek_pos] == '#':
+                # Comment-only line, treat as empty
+                while peek_pos < len(self.source) and self.source[peek_pos] != '\n':
+                    peek_pos += 1
+                self.current = peek_pos
+                if peek_pos < len(self.source) and self.source[peek_pos] == '\n':
+                    self.line += 1
+                    self.column = 1
+                    self.current += 1
+                self.pending_indent = True
+                return
+            if self.source[peek_pos] not in ' \t':
+                break
+            peek_pos += 1
+        
+        current_indent = self.indent_stack[-1]
+        
+        if indent_level > current_indent:
+            # Indent increased
+            self.indent_stack.append(indent_level)
+            self.tokens.append(Token(
+                TokenType.INDENT, "", indent_level, self.line, 1
+            ))
+        elif indent_level < current_indent:
+            # Indent decreased - generate DEDENT tokens
+            while len(self.indent_stack) > 1 and self.indent_stack[-1] > indent_level:
+                self.indent_stack.pop()
+                self.tokens.append(Token(
+                    TokenType.DEDENT, "", None, self.line, 1
+                ))
+            
+            # Check if indent level matches
+            if self.indent_stack[-1] != indent_level:
+                raise SyntaxError(
+                    f"Indentation error at line {self.line}: expected {self.indent_stack[-1]} spaces, got {indent_level}"
+                )
     
     def scan_token(self):
         """Scan a single token."""
@@ -84,13 +173,19 @@ class Lexer:
             self.add_token(TokenType.LESS_EQUAL if self.match('=') else TokenType.LESS)
         elif char == '>':
             self.add_token(TokenType.GREATER_EQUAL if self.match('=') else TokenType.GREATER)
-        elif char == ' ' or char == '\r' or char == '\t':
-            # Ignore whitespace
+        elif char == ' ' or char == '\r':
+            # Ignore whitespace (handled by indentation logic)
             pass
+        elif char == '\t':
+            # Tabs are not allowed (except in strings)
+            raise SyntaxError(
+                f"Tabs are not allowed. Use spaces instead at line {self.line}, column {self.column}"
+            )
         elif char == '\n':
             self.line += 1
             self.column = 1
             self.add_token(TokenType.NEWLINE)
+            self.pending_indent = True
         elif char == '"' or char == "'":
             self.scan_string(char)
         elif char.isdigit():
