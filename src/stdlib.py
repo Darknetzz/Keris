@@ -612,5 +612,23 @@ def create_stdlib() -> Dict[str, Any]:
         return list(range(start, end, step))
     
     stdlib["range"] = range_func
+
+    # ============================================================================
+    # Random Module
+    # ============================================================================
+    
+    # ───────────────────────────── FUNCTION: random_func ─────────────────────────────── #
+    def random_number() -> float:
+        """Generate a random float between 0 and 1.
+        
+        Returns:
+            float: A random float between 0 and 1.
+        """
+        return random.random()
+    
+    random_module = {
+        "random": random_number,
+    }
+    stdlib["random"] = random_module
     
     return stdlib
