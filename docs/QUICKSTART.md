@@ -113,8 +113,8 @@ person["city"] = "New York"
 
 ## Next Steps
 
-- Read the [Tutorial](docs/tutorial.md) for a comprehensive guide
-- Check out [Examples](examples/) for more programs
+- Read the [Tutorial](tutorial.md) for a comprehensive guide
+- Check out [Examples](../examples/) for more programs
 - Read the [Language Specification](SPECIFICATION.md) for complete details
 
 Happy coding! 🎉

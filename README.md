@@ -127,7 +127,8 @@ keris> exit
 
 ## Language Documentation
 
-- [Language Specification](SPECIFICATION.md) - Complete language reference
+- [Quick Start Guide](docs/QUICKSTART.md) - Get started in minutes
+- [Language Specification](docs/SPECIFICATION.md) - Complete language reference
 - [Tutorial](docs/tutorial.md) - Learn Keris step by step
 - [Keris vs Python Comparison](docs/COMPARISON.md) - Detailed comparison with Python
 - [Examples](examples/) - Example programs
@@ -143,6 +144,12 @@ print(*args)
 ```
 
 Print values to stdout.
+
+**Parameters:**
+
+- `*args`: Variable number of arguments to print. All arguments are converted to strings and printed with spaces between them.
+
+
 
 **Returns:** None: Always returns nil in Keris.
 
@@ -269,6 +276,12 @@ math.max(*args)
 
 Return the maximum value from the given arguments.
 
+**Parameters:**
+
+- `*args`: Variable number of numeric arguments.
+
+
+
 **Returns:** number or nil: The maximum value, or nil if no arguments provided.
 
 #### `math.min`
@@ -278,6 +291,12 @@ math.min(*args)
 ```
 
 Return the minimum value from the given arguments.
+
+**Parameters:**
+
+- `*args`: Variable number of numeric arguments.
+
+
 
 **Returns:** number or nil: The minimum value, or nil if no arguments provided.
 
@@ -830,7 +849,6 @@ See the [examples](examples/) directory for more complete programs.
 ```
 Keris/
 ├── README.md              # This file
-├── SPECIFICATION.md        # Language specification
 ├── DESIGN_OUTLINE.md      # Design document
 ├── main.py                # Entry point
 ├── src/                   # Source code
@@ -843,7 +861,10 @@ Keris/
 │   ├── stdlib.py         # Standard library
 │   └── keris.py          # Main interpreter
 ├── docs/                  # Documentation
-│   └── tutorial.md        # Tutorial
+│   ├── QUICKSTART.md     # Quick start guide
+│   ├── SPECIFICATION.md  # Language specification
+│   ├── tutorial.md       # Tutorial
+│   └── COMPARISON.md     # Keris vs Python comparison
 ├── examples/              # Example programs
 └── tests/                 # Test suite
 ```

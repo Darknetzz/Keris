@@ -249,9 +249,10 @@
 Keris/
 ├── README.md                 # Project overview
 ├── DESIGN_OUTLINE.md         # This file
-├── SPECIFICATION.md          # Language specification
 ├── LICENSE                   # License file
 ├── docs/                     # Documentation
+│   ├── QUICKSTART.md        # Quick start guide
+│   ├── SPECIFICATION.md     # Language specification
 │   ├── tutorial.md
 │   ├── reference.md
 │   └── examples/

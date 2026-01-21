@@ -10,6 +10,12 @@ print(*args)
 
 Print values to stdout.
 
+**Parameters:**
+
+- `*args`: Variable number of arguments to print. All arguments are converted to strings and printed with spaces between them.
+
+
+
 **Returns:** None: Always returns nil in Keris.
 
 
@@ -135,6 +141,12 @@ math.max(*args)
 
 Return the maximum value from the given arguments.
 
+**Parameters:**
+
+- `*args`: Variable number of numeric arguments.
+
+
+
 **Returns:** number or nil: The maximum value, or nil if no arguments provided.
 
 #### `math.min`
@@ -144,6 +156,12 @@ math.min(*args)
 ```
 
 Return the minimum value from the given arguments.
+
+**Parameters:**
+
+- `*args`: Variable number of numeric arguments.
+
+
 
 **Returns:** number or nil: The minimum value, or nil if no arguments provided.
 

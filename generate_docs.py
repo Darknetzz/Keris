@@ -111,9 +111,9 @@ def _parse_args(args_content: List[str]) -> List[Dict[str, str]]:
             continue
         
         # Check for parameter definition with type (e.g., "x (number): The number.")
-        match_with_type = re.match(r'^(\w+(?:\*|\.\.\.)?)\s*\(([^)]+)\):\s*(.+)$', line)
+        match_with_type = re.match(r'^(\*?\w+(?:\.\.\.)?)\s*\(([^)]+)\):\s*(.+)$', line)
         # Check for parameter definition without type (e.g., "*args: Variable number...")
-        match_without_type = re.match(r'^(\w+(?:\*|\.\.\.)?):\s*(.+)$', line)
+        match_without_type = re.match(r'^(\*?\w+(?:\.\.\.)?):\s*(.+)$', line)
         
         if match_with_type:
             if current_arg:
