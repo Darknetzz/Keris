@@ -248,11 +248,12 @@
 ```
 Keris/
 ├── README.md                 # Project overview
-├── DESIGN_OUTLINE.md         # This file
 ├── LICENSE                   # License file
 ├── docs/                     # Documentation
 │   ├── QUICKSTART.md        # Quick start guide
 │   ├── SPECIFICATION.md     # Language specification
+│   ├── DESIGN_OUTLINE.md    # This file
+│   ├── BUILD.md             # Building instructions
 │   ├── tutorial.md
 │   ├── reference.md
 │   └── examples/

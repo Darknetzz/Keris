@@ -849,7 +849,6 @@ See the [examples](examples/) directory for more complete programs.
 ```
 Keris/
 ├── README.md              # This file
-├── DESIGN_OUTLINE.md      # Design document
 ├── main.py                # Entry point
 ├── src/                   # Source code
 │   ├── token.py          # Token definitions
@@ -863,6 +862,8 @@ Keris/
 ├── docs/                  # Documentation
 │   ├── QUICKSTART.md     # Quick start guide
 │   ├── SPECIFICATION.md  # Language specification
+│   ├── DESIGN_OUTLINE.md # Design document
+│   ├── BUILD.md          # Building instructions
 │   ├── tutorial.md       # Tutorial
 │   └── COMPARISON.md     # Keris vs Python comparison
 ├── examples/              # Example programs
