@@ -1,8 +1,12 @@
 # Keris Programming Language
 
+<div align="center">
+
 <img src="img/keris.png" alt="Keris Logo" width="200">
 
 A general-purpose, dynamically-typed, interpreted programming language inspired by Python.
+
+</div>
 
 ## Features
 

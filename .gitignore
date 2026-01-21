@@ -33,3 +33,8 @@ Thumbs.db
 
 # Keris
 *.ksc  # Compiled Keris (if we add compilation later)
+
+# Build artifacts
+*.spec
+build/
+dist/
