@@ -70,6 +70,53 @@ PyInstaller automatically detects the platform you're building on:
 
 To build for a different platform, you can use PyInstaller's cross-compilation features or build on the target platform.
 
+## Binary Size Differences
+
+Windows binaries are typically **larger** than Linux binaries (often 1.5-2x the size) due to several factors:
+
+### Why Windows Binaries Are Larger
+
+1. **Visual C++ Runtime Libraries**: Windows executables include Microsoft Visual C++ runtime libraries (MSVCRT, VCRUNTIME, etc.) which add 1-3 MB
+2. **PE Format Overhead**: Windows PE (Portable Executable) format has more overhead than Linux ELF format
+3. **System DLLs**: Windows may bundle additional system DLLs and dependencies
+4. **Compression Differences**: UPX compression may be less effective on Windows binaries
+
+### Reducing Windows Binary Size
+
+If you need to reduce the Windows binary size, you can:
+
+1. **Exclude unnecessary modules** by editing `keris.spec`:
+   ```python
+   a = Analysis(
+       ['main.py'],
+       excludes=['tkinter', 'matplotlib', 'numpy', 'pandas'],  # Add modules to exclude
+       # ... other options
+   )
+   ```
+
+2. **Use `--exclude-module` flag**:
+   ```bash
+   pyinstaller --onefile --exclude-module tkinter --exclude-module matplotlib main.py
+   ```
+
+3. **Strip debug symbols** (already enabled in spec with `strip=False` - set to `True` to enable):
+   ```python
+   exe = EXE(
+       # ...
+       strip=True,  # Remove debug symbols
+   )
+   ```
+
+4. **Disable UPX** if it's causing issues (though it usually helps):
+   ```python
+   exe = EXE(
+       # ...
+       upx=False,  # Disable UPX compression
+   )
+   ```
+
+**Note**: The size difference is normal and expected. Windows binaries need to be self-contained with all runtime dependencies, while Linux can rely more on system libraries.
+
 ## Distribution
 
 The executable file in `dist/` is a standalone binary that includes Python and all dependencies. You can distribute it without requiring Python to be installed on the target machine.
