@@ -14,18 +14,154 @@ class Lexer:
         self.line = 1
         self.column = 1
         self.start_column = 1
+        self.indent_stack = [0]  # Track indentation levels (in spaces)
+        self.pending_indent = True  # Track if we're at the start of a line
     
     def scan_tokens(self) -> list[Token]:
         """Scan the source code and return a list of tokens."""
         while not self.is_at_end():
+            # Handle indentation at the start of a line
+            if self.pending_indent:
+                self.handle_indentation()
+            
+            if self.is_at_end():
+                break
+                
             self.start = self.current
             self.start_column = self.column
             self.scan_token()
+        
+        # Generate any remaining DEDENT tokens
+        while len(self.indent_stack) > 1:
+            self.indent_stack.pop()
+            self.tokens.append(Token(
+                TokenType.DEDENT, "", None, self.line, self.column
+            ))
         
         self.tokens.append(Token(
             TokenType.EOF, "", None, self.line, self.column
         ))
         return self.tokens
+    
+    def handle_indentation(self):
+        """Handle indentation at the start of a line."""
+        self.pending_indent = False
+        indent_level = 0
+        saved_current = self.current
+        saved_column = self.column
+        
+        # First, check if this line starts with a comment (before counting spaces)
+        # This handles comments at the very start of a line
+        if not self.is_at_end() and self.peek() == '#':
+            # Comment-only line (#) at start, treat as empty
+            while not self.is_at_end() and self.peek() != '\n':
+                self.advance()
+            if not self.is_at_end() and self.peek() == '\n':
+                self.line += 1
+                self.column = 1
+                self.advance()
+            self.pending_indent = True
+            return
+        
+        # Check for // comment at start of line
+        if not self.is_at_end() and self.current < len(self.source) - 1:
+            if self.source[self.current:self.current + 2] == '//':
+                # Comment-only line (//) at start, treat as empty
+                while not self.is_at_end() and self.peek() != '\n':
+                    self.advance()
+                if not self.is_at_end() and self.peek() == '\n':
+                    self.line += 1
+                    self.column = 1
+                    self.advance()
+                self.pending_indent = True
+                return
+        
+        # Count leading spaces (tabs are not allowed for indentation)
+        while not self.is_at_end():
+            char = self.peek()
+            if char == ' ':
+                indent_level += 1
+                self.advance()
+            elif char == '\t':
+                raise SyntaxError(
+                    f"Tabs are not allowed for indentation. Use spaces instead at line {self.line}, column {self.column}"
+                )
+            elif char == '\n':
+                # Empty line, skip it
+                self.line += 1
+                self.column = 1
+                self.advance()
+                continue
+            else:
+                # Non-whitespace character found
+                break
+        
+        # If we hit EOF, reset
+        if self.is_at_end():
+            self.current = saved_current
+            self.column = saved_column
+            return
+        
+        # Check if this line is only whitespace/comments (after indentation)
+        peek_pos = self.current
+        while peek_pos < len(self.source) and self.source[peek_pos] in ' \t':
+            peek_pos += 1
+        
+        # Check for comment after indentation
+        if peek_pos < len(self.source):
+            if self.source[peek_pos] == '#':
+                # Comment-only line (#), treat as empty
+                while peek_pos < len(self.source) and self.source[peek_pos] != '\n':
+                    peek_pos += 1
+                self.current = peek_pos
+                if peek_pos < len(self.source) and self.source[peek_pos] == '\n':
+                    self.line += 1
+                    self.column = 1
+                    self.current += 1
+                self.pending_indent = True
+                return
+            elif peek_pos < len(self.source) - 1 and self.source[peek_pos:peek_pos + 2] == '//':
+                # Comment-only line (//), treat as empty
+                while peek_pos < len(self.source) and self.source[peek_pos] != '\n':
+                    peek_pos += 1
+                self.current = peek_pos
+                if peek_pos < len(self.source) and self.source[peek_pos] == '\n':
+                    self.line += 1
+                    self.column = 1
+                    self.current += 1
+                self.pending_indent = True
+                return
+        
+        current_indent = self.indent_stack[-1]
+        
+        # Only generate INDENT/DEDENT tokens if indentation actually changed
+        # If indent_level == current_indent, we don't need any tokens
+        # (This happens when we're at the same indentation level, like after a comment)
+        # Note: We should NOT generate INDENT tokens for statements like 'let', 'const', etc.
+        # Only for block-starting statements like 'if', 'while', 'for', 'def', etc.
+        # IMPORTANT: When indent_level == current_indent, we should NOT generate any tokens
+        if indent_level == current_indent:
+            # Same indentation level - no tokens needed
+            pass
+        elif indent_level > current_indent:
+            # Indent increased
+            self.indent_stack.append(indent_level)
+            self.tokens.append(Token(
+                TokenType.INDENT, "", indent_level, self.line, 1
+            ))
+        elif indent_level < current_indent:
+            # Indent decreased - generate DEDENT tokens
+            while len(self.indent_stack) > 1 and self.indent_stack[-1] > indent_level:
+                self.indent_stack.pop()
+                self.tokens.append(Token(
+                    TokenType.DEDENT, "", None, self.line, 1
+                ))
+            
+            # Check if indent level matches
+            if self.indent_stack[-1] != indent_level:
+                raise SyntaxError(
+                    f"Indentation error at line {self.line}: expected {self.indent_stack[-1]} spaces, got {indent_level}"
+                )
     
     def scan_token(self):
         """Scan a single token."""
@@ -65,15 +201,18 @@ class Lexer:
                 # Single-line comment (//)
                 while self.peek() != '\n' and not self.is_at_end():
                     self.advance()
+                # Don't add token for comments - they're ignored
             elif self.match('*'):
                 # Multi-line comment
                 self.scan_multiline_comment()
+                # Don't add token for comments - they're ignored
             else:
                 self.add_token(TokenType.SLASH)
         elif char == '#':
             # Single-line comment (#)
             while self.peek() != '\n' and not self.is_at_end():
                 self.advance()
+            # Don't add token for comments - they're ignored
         elif char == '%':
             self.add_token(TokenType.PERCENT)
         elif char == '!':
@@ -84,13 +223,19 @@ class Lexer:
             self.add_token(TokenType.LESS_EQUAL if self.match('=') else TokenType.LESS)
         elif char == '>':
             self.add_token(TokenType.GREATER_EQUAL if self.match('=') else TokenType.GREATER)
-        elif char == ' ' or char == '\r' or char == '\t':
-            # Ignore whitespace
+        elif char == ' ' or char == '\r':
+            # Ignore whitespace (handled by indentation logic)
             pass
+        elif char == '\t':
+            # Tabs are not allowed (except in strings)
+            raise SyntaxError(
+                f"Tabs are not allowed. Use spaces instead at line {self.line}, column {self.column}"
+            )
         elif char == '\n':
             self.line += 1
             self.column = 1
             self.add_token(TokenType.NEWLINE)
+            self.pending_indent = True
         elif char == '"' or char == "'":
             self.scan_string(char)
         elif char.isdigit():

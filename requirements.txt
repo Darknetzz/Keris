@@ -1,0 +1,6 @@
+# Runtime dependencies
+rich>=13.0.0
+typer>=0.9.0
+
+# Build dependencies
+pyinstaller>=6.0.0

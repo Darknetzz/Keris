@@ -14,6 +14,25 @@ Keris is a general-purpose, dynamically-typed, interpreted programming language 
 
 ## Syntax
 
+### Indentation
+
+Keris uses indentation to delimit code blocks, similar to Python. Indentation must be consistent throughout a file.
+
+- Use **spaces** for indentation (tabs are not allowed)
+- Standard indentation is **4 spaces** per level
+- Indentation level determines block structure
+- All statements at the same indentation level belong to the same block
+- A colon (`:`) is required after control flow keywords (`if`, `while`, `for`, `def`, `try`, `else`, `elif`, `catch`)
+
+```keris
+if x > 0:
+    print("Positive")
+    if x > 10:
+        print("Large")
+else:
+    print("Non-positive")
+```
+
 ### Comments
 
 ```keris
@@ -155,39 +174,33 @@ not  // Logical NOT
 ### If/Else
 
 ```keris
-if condition {
+if condition:
     // code
-} elif other_condition {
+elif other_condition:
     // code
-} else {
+else:
     // code
-}
 ```
 
 ### While Loop
 
 ```keris
-while condition {
+while condition:
     // code
-    if should_break {
+    if should_break:
         break
-    }
-    if should_continue {
+    if should_continue:
         continue
-    }
-}
 ```
 
 ### For Loop
 
 ```keris
-for item in list {
+for item in list:
     print(item)
-}
 
-for i in range(0, 10) {
+for i in range(0, 10):
     print(i)
-}
 ```
 
 ### Return
@@ -204,17 +217,14 @@ return  // Returns nil
 ### Definition
 
 ```keris
-def greet(name) {
+def greet(name):
     return "Hello, " + name
-}
 
-def add(a, b) {
+def add(a, b):
     return a + b
-}
 
-def no_args() {
+def no_args():
     print("No arguments")
-}
 ```
 
 ### Calling
@@ -228,9 +238,8 @@ no_args()
 ### Default Parameters
 
 ```keris
-def greet(name = "Guest") {
+def greet(name = "Guest"):
     return "Hello, " + name
-}
 ```
 
 ### Variable Arguments (Future)
@@ -285,12 +294,11 @@ person.len()
 ## Error Handling
 
 ```keris
-try {
+try:
     // code that might throw
     throw "Error message"
-} catch error {
+catch error:
     print("Caught: " + error)
-}
 ```
 
 ---
@@ -349,6 +357,8 @@ list.append([1, 2], 3)
 list.pop([1, 2, 3])
 list.len([1, 2, 3])
 list.contains([1, 2, 3], 2)
+list.shuffle([1, 2, 3, 4, 5])  // Randomly reorders the list
+list.sort([3, 1, 4, 1, 5])     // Sorts the list in ascending order
 ```
 
 ### Dict
@@ -398,12 +408,10 @@ print("Hello, World!")
 ### Variables and Functions
 
 ```keris
-def factorial(n) {
-    if n <= 1 {
+def factorial(n):
+    if n <= 1:
         return 1
-    }
     return n * factorial(n - 1)
-}
 
 let result = factorial(5)
 print(result)
@@ -415,9 +423,8 @@ print(result)
 let numbers = [1, 2, 3, 4, 5]
 let sum = 0
 
-for num in numbers {
+for num in numbers:
     sum = sum + num
-}
 
 print("Sum:", sum)
 ```
@@ -437,18 +444,15 @@ print(person["name"] + " is " + person["age"] + " years old")
 ### Error Handling
 
 ```keris
-def divide(a, b) {
-    if b == 0 {
+def divide(a, b):
+    if b == 0:
         throw "Division by zero"
-    }
     return a / b
-}
 
-try {
+try:
     let result = divide(10, 0)
-} catch error {
+catch error:
     print("Error:", error)
-}
 ```
 
 ---
@@ -474,11 +478,11 @@ statement   := expr_stmt
 expr_stmt   := expression ";"
             |  expression
 
-if_stmt     := "if" expression block ("elif" expression block)* ("else" block)?
+if_stmt     := "if" expression ":" NEWLINE? INDENT statement* DEDENT ("elif" expression ":" NEWLINE? INDENT statement* DEDENT)* ("else" ":" NEWLINE? INDENT statement* DEDENT)?
 
-while_stmt  := "while" expression block
+while_stmt  := "while" expression ":" NEWLINE? INDENT statement* DEDENT
 
-for_stmt    := "for" IDENTIFIER "in" expression block
+for_stmt    := "for" IDENTIFIER "in" expression ":" NEWLINE? INDENT statement* DEDENT
 
 return_stmt := "return" expression?
             |  "return"
@@ -489,11 +493,11 @@ continue_stmt := "continue"
 let_stmt    := "let" IDENTIFIER "=" expression
 const_stmt  := "const" IDENTIFIER "=" expression
 
-def_stmt    := "def" IDENTIFIER "(" parameters? ")" block
+def_stmt    := "def" IDENTIFIER "(" parameters? ")" ":" NEWLINE? INDENT statement* DEDENT
 
-block       := "{" statement* "}"
+block       := INDENT statement* DEDENT
 
-try_stmt    := "try" block "catch" IDENTIFIER block
+try_stmt    := "try" ":" NEWLINE? INDENT statement* DEDENT "catch" IDENTIFIER ":" NEWLINE? INDENT statement* DEDENT
 
 expression  := assignment
 

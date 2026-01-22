@@ -24,6 +24,11 @@ class Parser:
             if self.check(TokenType.NEWLINE):
                 self.advance()  # Skip newlines
                 continue
+            if self.check(TokenType.INDENT):
+                # Skip INDENT tokens that appear before declarations
+                # (These should only appear after block-starting keywords)
+                self.advance()
+                continue
             statements.append(self.declaration())
         return statements
     
@@ -43,6 +48,9 @@ class Parser:
     
     def var_declaration(self, is_const: bool) -> Stmt:
         """Parse a variable declaration."""
+        # Skip any INDENT tokens that might appear (e.g., after comments)
+        while self.check(TokenType.INDENT):
+            self.advance()
         name = self.consume(TokenType.IDENTIFIER, "Expected variable name").lexeme
         self.consume(TokenType.EQUAL, "Expected '=' after variable name")
         initializer = self.expression()
@@ -60,7 +68,10 @@ class Parser:
                 params.append(self.consume(TokenType.IDENTIFIER, "Expected parameter name").lexeme)
         
         self.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters")
-        self.consume(TokenType.LEFT_BRACE, "Expected '{' before function body")
+        self.consume(TokenType.COLON, "Expected ':' after function signature")
+        # Optional newline before INDENT
+        self.match(TokenType.NEWLINE)
+        self.consume(TokenType.INDENT, "Expected indented function body")
         body = self.block_statements()
         return Function(name, params, body)
     
@@ -80,21 +91,25 @@ class Parser:
             return self.return_statement()
         if self.match(TokenType.TRY):
             return self.try_statement()
-        if self.match(TokenType.LEFT_BRACE):
-            return Block(self.block_statements())
         return self.expression_statement()
     
     def if_statement(self) -> Stmt:
         """Parse an if statement."""
         condition = self.expression()
-        self.consume(TokenType.LEFT_BRACE, "Expected '{' after if condition")
+        self.consume(TokenType.COLON, "Expected ':' after if condition")
+        # Optional newline before INDENT
+        self.match(TokenType.NEWLINE)
+        self.consume(TokenType.INDENT, "Expected indented block after if condition")
         then_branch = Block(self.block_statements())
         
         else_branch = None
         if self.match(TokenType.ELIF):
             else_branch = self.if_statement()  # Recursive for elif
         elif self.match(TokenType.ELSE):
-            self.consume(TokenType.LEFT_BRACE, "Expected '{' after else")
+            self.consume(TokenType.COLON, "Expected ':' after else")
+            # Optional newline before INDENT
+            self.match(TokenType.NEWLINE)
+            self.consume(TokenType.INDENT, "Expected indented block after else")
             else_branch = Block(self.block_statements())
         
         return If(condition, then_branch, else_branch)
@@ -102,7 +117,10 @@ class Parser:
     def while_statement(self) -> Stmt:
         """Parse a while statement."""
         condition = self.expression()
-        self.consume(TokenType.LEFT_BRACE, "Expected '{' after while condition")
+        self.consume(TokenType.COLON, "Expected ':' after while condition")
+        # Optional newline before INDENT
+        self.match(TokenType.NEWLINE)
+        self.consume(TokenType.INDENT, "Expected indented block after while condition")
         body = Block(self.block_statements())
         return While(condition, body)
     
@@ -111,36 +129,45 @@ class Parser:
         var_name = self.consume(TokenType.IDENTIFIER, "Expected variable name after 'for'").lexeme
         self.consume(TokenType.IN, "Expected 'in' after for variable")
         iterable = self.expression()
-        self.consume(TokenType.LEFT_BRACE, "Expected '{' after for iterable")
+        self.consume(TokenType.COLON, "Expected ':' after for iterable")
+        # Optional newline before INDENT
+        self.match(TokenType.NEWLINE)
+        self.consume(TokenType.INDENT, "Expected indented block after for iterable")
         body = Block(self.block_statements())
         return For(var_name, iterable, body)
     
     def return_statement(self) -> Stmt:
         """Parse a return statement."""
         value = None
-        if not self.check(TokenType.NEWLINE) and not self.check(TokenType.SEMICOLON) and not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+        if not self.check(TokenType.NEWLINE) and not self.check(TokenType.SEMICOLON) and not self.check(TokenType.DEDENT) and not self.is_at_end():
             value = self.expression()
         return Return(value)
     
     def try_statement(self) -> Stmt:
         """Parse a try-catch statement."""
-        self.consume(TokenType.LEFT_BRACE, "Expected '{' after try")
+        self.consume(TokenType.COLON, "Expected ':' after try")
+        # Optional newline before INDENT
+        self.match(TokenType.NEWLINE)
+        self.consume(TokenType.INDENT, "Expected indented block after try")
         try_block = Block(self.block_statements())
         self.consume(TokenType.CATCH, "Expected 'catch' after try block")
         catch_var = self.consume(TokenType.IDENTIFIER, "Expected variable name after 'catch'").lexeme
-        self.consume(TokenType.LEFT_BRACE, "Expected '{' after catch variable")
+        self.consume(TokenType.COLON, "Expected ':' after catch variable")
+        # Optional newline before INDENT
+        self.match(TokenType.NEWLINE)
+        self.consume(TokenType.INDENT, "Expected indented block after catch variable")
         catch_block = Block(self.block_statements())
         return Try(try_block, catch_var, catch_block)
     
     def block_statements(self) -> List[Stmt]:
-        """Parse statements until closing brace."""
+        """Parse statements until DEDENT."""
         statements = []
-        while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+        while not self.check(TokenType.DEDENT) and not self.is_at_end():
             if self.check(TokenType.NEWLINE):
                 self.advance()  # Skip newlines
                 continue
             statements.append(self.declaration())
-        self.consume(TokenType.RIGHT_BRACE, "Expected '}' after block")
+        self.consume(TokenType.DEDENT, "Expected dedent after block")
         return statements
     
     def expression_statement(self) -> Stmt:

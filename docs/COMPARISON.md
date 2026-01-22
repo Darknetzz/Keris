@@ -164,6 +164,8 @@ list.append(lst, 4)
 list.pop(lst)
 list.len(lst)
 list.contains(lst, 3)
+list.shuffle(lst)  // Randomly reorders the list
+list.sort(lst)     // Sorts the list in ascending order
 ```
 
 - **Python**: Methods on objects (object-oriented)
