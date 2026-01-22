@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Build script to create keris.exe executable using PyInstaller."""
+"""Build script to create keris executable using PyInstaller."""
 
 import subprocess
 import sys
 import os
 
 def build_executable():
-    """Build the keris.exe executable."""
+    """Build the keris executable."""
     # PyInstaller command
     cmd = [
         "pyinstaller",
@@ -17,13 +17,13 @@ def build_executable():
         "main.py"
     ]
     
-    print("Building keris.exe...")
+    print("Building keris...")
     print(f"Running: {' '.join(cmd)}")
     
     try:
         subprocess.run(cmd, check=True)
         print("\n✓ Build successful!")
-        print(f"Executable created at: {os.path.join('dist', 'keris.exe')}")
+        print(f"Executable created at: {os.path.join('dist', 'keris')}")
     except subprocess.CalledProcessError as e:
         print(f"\n✗ Build failed: {e}", file=sys.stderr)
         sys.exit(1)

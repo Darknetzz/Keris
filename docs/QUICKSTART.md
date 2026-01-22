@@ -10,6 +10,20 @@ No installation needed! Just make sure you have Python 3.7+ installed.
 python --version  # Should be 3.7 or higher
 ```
 
+### Building Standalone Executables
+
+You can build standalone executables for Windows and Linux:
+
+```bash
+pip install pyinstaller
+python build.py
+```
+
+- **Windows**: Creates `dist/keris.exe`
+- **Linux**: Creates `dist/keris`
+
+See [Building Instructions](BUILD.md) for more details.
+
 ## Your First Program
 
 1. Create a file `hello.ks`:

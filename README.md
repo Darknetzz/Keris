@@ -33,10 +33,22 @@ cd Keris
 # Run directly
 python main.py
 
-# Or make it executable (Unix)
+# Or make it executable (Unix/Linux)
 chmod +x main.py
 ./main.py
 ```
+
+### Building Standalone Executables
+
+You can build standalone executables for Windows and Linux using PyInstaller. See [Building Instructions](docs/BUILD.md) for details.
+
+```bash
+# Build executable (works on both Windows and Linux)
+python build.py
+```
+
+- **Windows**: Creates `dist/keris.exe`
+- **Linux**: Creates `dist/keris`
 
 ## Quick Start
 
