@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Keris vs Python benchmark</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { color: #1a1a2e; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: right; }
+    th { background: #1a1a2e; color: #eee; }
+    td:first-child { text-align: left; }
+    .chart { margin: 2rem 0; }
+    .row { display: flex; align-items: center; gap: 1rem; margin: 0.5rem 0; }
+    .label { flex: 0 0 280px; font-size: 0.9rem; }
+    .bar-wrap { flex: 1; display: flex; height: 24px; background: #f0f0f0; border-radius: 4px; overflow: hidden; }
+    .bar { height: 100%; min-width: 2px; }
+    .bar.py { background: #2e7d32; }
+    .bar.keris { background: #1565c0; }
+    .legend { flex: 0 0 120px; font-size: 0.85rem; color: #555; }
+    .note { color: #666; font-size: 0.9rem; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>Keris vs Python benchmark</h1>
+  <p>Lower bar = faster. Python is baseline (1×). Keris runs on the Python interpreter.</p>
+  <div class="chart">
+        <div class="row"><span class="label">Fibonacci (recursive, fib(30))</span><div class="bar-wrap"><div class="bar py" style="width:0.6243710805337163%"></div><div class="bar keris" style="width:99.37562891946628%"></div></div><span class="legend">Py 1× / Keris 159.2×</span></div>
+        <div class="row"><span class="label">Factorial (recursive, fact(100))</span><div class="bar-wrap"><div class="bar py" style="width:0.8532157249574797%"></div><div class="bar keris" style="width:99.14678427504252%"></div></div><span class="legend">Py 1× / Keris 116.2×</span></div>
+        <div class="row"><span class="label">Loop (sum 0..199999)</span><div class="bar-wrap"><div class="bar py" style="width:0.5941755439993168%"></div><div class="bar keris" style="width:99.40582445600069%"></div></div><span class="legend">Py 1× / Keris 167.3×</span></div>
+  </div>
+  <h2>Times (median of 5 runs)</h2>
+  <table>
+    <tr><th>Benchmark</th><th>Keris</th><th>Python</th><th>Keris / Python</th></tr>
+        <tr><td>Fibonacci (recursive, fib(30))</td><td>15526.67 ms</td><td>97.55 ms</td><td>159.2×</td></tr>
+        <tr><td>Factorial (recursive, fact(100))</td><td>0.69 ms</td><td>0.01 ms</td><td>116.2×</td></tr>
+        <tr><td>Loop (sum 0..199999)</td><td>1156.45 ms</td><td>6.91 ms</td><td>167.3×</td></tr>
+  </table>
+  <p class="note">Run <code>python run_benchmarks.py</code> to regenerate. All benchmarks use the same algorithms in both languages.</p>
+</body>
+</html>

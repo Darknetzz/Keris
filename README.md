@@ -144,6 +144,7 @@ keris> exit
 - [Tutorial](docs/tutorial.md) - Learn Keris step by step
 - [Keris vs Python Comparison](docs/COMPARISON.md) - Detailed comparison with Python
 - [Examples](examples/) - Example programs
+- [Benchmarks](benchmarks/) - Performance comparison (Keris vs Python) and [report](benchmarks/report.html)
 
 ## Standard Library
 
@@ -856,6 +857,16 @@ range(0, 10, 2)      # Returns: [0, 2, 4, 6, 8]
 
 See the [examples](examples/) directory for more complete programs.
 
+### Benchmarking
+
+Run comparisons against Python and regenerate the report:
+
+```bash
+python run_benchmarks.py
+```
+
+This writes [benchmarks/report.html](benchmarks/report.html) with a comparison chart and timings.
+
 ## Project Structure
 
 ```
@@ -879,6 +890,7 @@ Keris/
 │   ├── tutorial.md       # Tutorial
 │   └── COMPARISON.md     # Keris vs Python comparison
 ├── examples/              # Example programs
+├── benchmarks/            # Benchmark scripts and report
 └── tests/                 # Test suite
 ```
 
