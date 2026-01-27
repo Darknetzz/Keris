@@ -17,7 +17,8 @@ sys.path.insert(0, str(ROOT))
 
 from src.lexer import Lexer
 from src.parser import Parser
-from src.interpreter import Interpreter
+from src.compiler import compile_chunk, CompilerError
+from src.vm import VM
 from src.runtime import RuntimeError as KerisRuntimeError
 
 
@@ -51,20 +52,23 @@ while i < 200000:
 
 
 def run_keris(source: str, runs: int = 3) -> float:
-    """Run Keris source and return median time in seconds (stdout suppressed)."""
+    """Run Keris source (bytecode VM) and return median time in seconds (stdout suppressed)."""
     lexer = Lexer(source)
     tokens = lexer.scan_tokens()
     parser = Parser(tokens)
     statements = parser.parse()
-    interpreter = Interpreter()
+    try:
+        chunk = compile_chunk(statements)
+    except CompilerError:
+        raise
     out = io.StringIO()
     times = []
     for _ in range(runs):
-        interp = Interpreter()
+        vm = VM()
         start = time.perf_counter()
         with redirect_stdout(out):
             try:
-                interp.interpret(statements)
+                vm.run(chunk)
             except KerisRuntimeError:
                 pass
         times.append(time.perf_counter() - start)
@@ -173,7 +177,6 @@ def build_html(results: list) -> str:
     for name, k_time, p_time in results:
         if k_time is not None and p_time and p_time > 0:
             ratio = k_time / p_time
-            max_ratio = max(max_ratio, ratio)
             rows.append((name, k_time, p_time, ratio))
         else:
             rows.append((name, k_time, p_time, None))

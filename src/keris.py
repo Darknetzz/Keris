@@ -12,6 +12,8 @@ from rich.text import Text
 from .lexer import Lexer
 from .parser import Parser, ParseError
 from .interpreter import Interpreter
+from .compiler import compile_chunk, CompilerError
+from .vm import VM
 from .runtime import RuntimeError
 
 app = typer.Typer(
@@ -25,8 +27,8 @@ console = Console()
 VERSION = "1.0.0"
 
 
-def run(source: str) -> None:
-    """Run Keris source code."""
+def run(source: str, use_vm: bool = True) -> None:
+    """Run Keris source code. Uses bytecode VM by default, falls back to tree-walk on compile error."""
     lexer = Lexer(source)
     tokens = lexer.scan_tokens()
     
@@ -37,6 +39,14 @@ def run(source: str) -> None:
         console.print(f"[red]Parse error:[/red] {e}", style="bold red")
         sys.exit(1)
     
+    if use_vm:
+        try:
+            chunk = compile_chunk(statements)
+            vm = VM()
+            vm.run(chunk)
+            return
+        except CompilerError:
+            pass  # fall back to tree-walk
     interpreter = Interpreter()
     try:
         interpreter.interpret(statements)
@@ -45,7 +55,7 @@ def run(source: str) -> None:
         sys.exit(1)
 
 
-def run_file(filename: str) -> None:
+def run_file(filename: str, use_vm: bool = True) -> None:
     """Run a Keris source file."""
     file_path = Path(filename)
     if not file_path.exists():
@@ -55,13 +65,13 @@ def run_file(filename: str) -> None:
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             source = f.read()
-        run(source)
+        run(source, use_vm=use_vm)
     except IOError as e:
         console.print(f"[red]Error reading file:[/red] {e}", style="bold red")
         sys.exit(1)
 
 
-def run_prompt() -> None:
+def run_prompt(use_vm: bool = True) -> None:
     """Run the Keris REPL."""
     interpreter = Interpreter()
     
@@ -107,6 +117,7 @@ def run_prompt() -> None:
 def main(
     script: Optional[str] = typer.Argument(None, help="Keris script file to run"),
     version: bool = typer.Option(False, "--version", "-v", help="Show version information"),
+    tree_walk: bool = typer.Option(False, "--tree-walk", help="Use tree-walk interpreter instead of bytecode VM"),
 ) -> None:
     """
     Keris Programming Language Interpreter
@@ -121,9 +132,9 @@ def main(
         sys.exit(0)
     
     if script:
-        run_file(script)
+        run_file(script, use_vm=not tree_walk)
     else:
-        run_prompt()
+        run_prompt(use_vm=not tree_walk)
 
 
 def cli() -> None:

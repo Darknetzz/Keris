@@ -119,6 +119,12 @@ print(person["name"] + " is " + person["age"] + " years old")
 python main.py script.ks
 ```
 
+Scripts are executed by the **bytecode VM** by default. To use the original tree-walk interpreter instead (e.g. for debugging), pass `--tree-walk`:
+
+```bash
+python main.py --tree-walk script.ks
+```
+
 ### Interactive REPL
 
 ```bash
