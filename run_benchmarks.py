@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT))
 
 from src.lexer import Lexer
 from src.parser import Parser
+from src.python_compiler import compile_to_python, TranspileError
 from src.compiler import compile_chunk, CompilerError
 from src.vm import VM
 from src.runtime import RuntimeError as KerisRuntimeError
@@ -51,18 +52,35 @@ while i < 200000:
 """
 
 
-def run_keris(source: str, runs: int = 3) -> float:
-    """Run Keris source (bytecode VM) and return median time in seconds (stdout suppressed)."""
+def run_keris(source: str, runs: int = 3, use_compile: bool = True) -> float:
+    """Run Keris source; use compile-to-Python if use_compile else VM. Returns median time (s)."""
     lexer = Lexer(source)
     tokens = lexer.scan_tokens()
     parser = Parser(tokens)
     statements = parser.parse()
+    out = io.StringIO()
+    times = []
+    if use_compile:
+        try:
+            code, globals_dict = compile_to_python(statements)
+            for _ in range(runs):
+                g = dict(globals_dict)
+                start = time.perf_counter()
+                with redirect_stdout(out):
+                    try:
+                        exec(code, g)
+                    except Exception:
+                        pass
+                times.append(time.perf_counter() - start)
+            if times:
+                times.sort()
+                return times[len(times) // 2]
+        except TranspileError:
+            pass
     try:
         chunk = compile_chunk(statements)
     except CompilerError:
         raise
-    out = io.StringIO()
-    times = []
     for _ in range(runs):
         vm = VM()
         start = time.perf_counter()

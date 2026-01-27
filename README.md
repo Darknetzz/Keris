@@ -119,10 +119,15 @@ print(person["name"] + " is " + person["age"] + " years old")
 python main.py script.ks
 ```
 
-Scripts are executed by the **bytecode VM** by default. To use the original tree-walk interpreter instead (e.g. for debugging), pass `--tree-walk`:
+Scripts are **compiled to Python** by default for near–native speed, then fall back to the bytecode VM or tree-walk interpreter if needed.
+
+- **`--no-compile`** – Skip compile-to-Python; use VM or tree-walk only.
+- **`--tree-walk`** – Use the original tree-walk interpreter only (slowest, for debugging).
 
 ```bash
-python main.py --tree-walk script.ks
+python main.py script.ks           # default: compile to Python (fast)
+python main.py --no-compile script.ks   # use VM only
+python main.py --tree-walk script.ks    # use tree-walk only
 ```
 
 ### Interactive REPL

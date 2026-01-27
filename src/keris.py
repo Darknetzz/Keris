@@ -14,6 +14,7 @@ from .parser import Parser, ParseError
 from .interpreter import Interpreter
 from .compiler import compile_chunk, CompilerError
 from .vm import VM
+from .python_compiler import compile_to_python, TranspileError
 from .runtime import RuntimeError
 
 app = typer.Typer(
@@ -27,8 +28,8 @@ console = Console()
 VERSION = "1.0.0"
 
 
-def run(source: str, use_vm: bool = True) -> None:
-    """Run Keris source code. Uses bytecode VM by default, falls back to tree-walk on compile error."""
+def run(source: str, use_vm: bool = True, use_compile: bool = True) -> None:
+    """Run Keris source. Tries Python compile (fast) first, then VM, then tree-walk."""
     lexer = Lexer(source)
     tokens = lexer.scan_tokens()
     
@@ -39,6 +40,19 @@ def run(source: str, use_vm: bool = True) -> None:
         console.print(f"[red]Parse error:[/red] {e}", style="bold red")
         sys.exit(1)
     
+    # 1) Compile to Python and exec for near-native speed
+    if use_compile:
+        try:
+            code, globals_dict = compile_to_python(statements)
+            exec(code, globals_dict)
+            return
+        except TranspileError:
+            pass
+        except Exception as e:
+            console.print(f"[red]Runtime error:[/red] {e}", style="bold red")
+            sys.exit(1)
+    
+    # 2) Bytecode VM
     if use_vm:
         try:
             chunk = compile_chunk(statements)
@@ -46,7 +60,8 @@ def run(source: str, use_vm: bool = True) -> None:
             vm.run(chunk)
             return
         except CompilerError:
-            pass  # fall back to tree-walk
+            pass
+    # 3) Tree-walk interpreter
     interpreter = Interpreter()
     try:
         interpreter.interpret(statements)
@@ -55,7 +70,7 @@ def run(source: str, use_vm: bool = True) -> None:
         sys.exit(1)
 
 
-def run_file(filename: str, use_vm: bool = True) -> None:
+def run_file(filename: str, use_vm: bool = True, use_compile: bool = True) -> None:
     """Run a Keris source file."""
     file_path = Path(filename)
     if not file_path.exists():
@@ -65,7 +80,7 @@ def run_file(filename: str, use_vm: bool = True) -> None:
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             source = f.read()
-        run(source, use_vm=use_vm)
+        run(source, use_vm=use_vm, use_compile=use_compile)
     except IOError as e:
         console.print(f"[red]Error reading file:[/red] {e}", style="bold red")
         sys.exit(1)
@@ -117,7 +132,8 @@ def run_prompt(use_vm: bool = True) -> None:
 def main(
     script: Optional[str] = typer.Argument(None, help="Keris script file to run"),
     version: bool = typer.Option(False, "--version", "-v", help="Show version information"),
-    tree_walk: bool = typer.Option(False, "--tree-walk", help="Use tree-walk interpreter instead of bytecode VM"),
+    tree_walk: bool = typer.Option(False, "--tree-walk", help="Use tree-walk interpreter only (no compile, no VM)"),
+    no_compile: bool = typer.Option(False, "--no-compile", help="Skip compile-to-Python; use VM or tree-walk only"),
 ) -> None:
     """
     Keris Programming Language Interpreter
@@ -131,10 +147,12 @@ def main(
         console.print(f"[bold cyan]Keris v{VERSION}[/bold cyan]")
         sys.exit(0)
     
+    use_compile = not no_compile and not tree_walk
+    use_vm = not tree_walk
     if script:
-        run_file(script, use_vm=not tree_walk)
+        run_file(script, use_vm=use_vm, use_compile=use_compile)
     else:
-        run_prompt(use_vm=not tree_walk)
+        run_prompt(use_vm=use_vm)
 
 
 def cli() -> None:
