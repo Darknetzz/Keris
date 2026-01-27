@@ -154,6 +154,7 @@ keris> exit
 - [Language Specification](docs/SPECIFICATION.md) - Complete language reference
 - [Tutorial](docs/tutorial.md) - Learn Keris step by step
 - [Keris vs Python Comparison](docs/COMPARISON.md) - Detailed comparison with Python
+- [Performance](docs/PERFORMANCE.md) - Execution modes and benchmarks (compile-to-Python, VM, tree-walk)
 - [Examples](examples/) - Example programs
 - [Benchmarks](benchmarks/) - Performance comparison (Keris vs Python) and [report](benchmarks/report.html)
 
@@ -876,7 +877,7 @@ Run comparisons against Python and regenerate the report:
 python run_benchmarks.py
 ```
 
-This writes [benchmarks/report.html](benchmarks/report.html) with a comparison chart and timings.
+This writes [benchmarks/report.html](benchmarks/report.html) with a comparison chart and timings. Keris is **compiled to Python** for the benchmark, so it runs at **near–native speed**: typically **0.9×–2.2×** vs Python (Fibonacci often slightly faster, loop a bit slower). See [benchmarks/README.md](benchmarks/README.md) for details.
 
 ## Project Structure
 
@@ -899,7 +900,8 @@ Keris/
 │   ├── DESIGN_OUTLINE.md # Design document
 │   ├── BUILD.md          # Building instructions
 │   ├── tutorial.md       # Tutorial
-│   └── COMPARISON.md     # Keris vs Python comparison
+│   ├── COMPARISON.md     # Keris vs Python comparison
+│   └── PERFORMANCE.md    # Execution modes and benchmarks
 ├── examples/              # Example programs
 ├── benchmarks/            # Benchmark scripts and report
 └── tests/                 # Test suite
