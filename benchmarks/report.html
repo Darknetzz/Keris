@@ -25,16 +25,16 @@
   <h1>Keris vs Python benchmark</h1>
   <p>Lower bar = faster. Python is baseline (1×). Keris runs on the Python interpreter.</p>
   <div class="chart">
-        <div class="row"><span class="label">Fibonacci (recursive, fib(30))</span><div class="bar-wrap"><div class="bar py" style="width:52.7983299719289%"></div><div class="bar keris" style="width:47.201670028071106%"></div></div><span class="legend">Py 1× / Keris 0.9×</span></div>
-        <div class="row"><span class="label">Factorial (recursive, fact(100))</span><div class="bar-wrap"><div class="bar py" style="width:38.27170030972211%"></div><div class="bar keris" style="width:61.728299690277886%"></div></div><span class="legend">Py 1× / Keris 1.6×</span></div>
-        <div class="row"><span class="label">Loop (sum 0..199999)</span><div class="bar-wrap"><div class="bar py" style="width:27.745635177828127%"></div><div class="bar keris" style="width:72.25436482217187%"></div></div><span class="legend">Py 1× / Keris 2.6×</span></div>
+        <div class="row"><span class="label">Fibonacci (recursive, fib(30))</span><div class="bar-wrap"><div class="bar py" style="width:53.18610776595186%"></div><div class="bar keris" style="width:46.81389223404814%"></div></div><span class="legend">Py 1× / Keris 0.9×</span></div>
+        <div class="row"><span class="label">Factorial (recursive, fact(100))</span><div class="bar-wrap"><div class="bar py" style="width:46.715413751861476%"></div><div class="bar keris" style="width:53.284586248138524%"></div></div><span class="legend">Py 1× / Keris 1.1×</span></div>
+        <div class="row"><span class="label">Loop (sum 0..199999)</span><div class="bar-wrap"><div class="bar py" style="width:31.245476191204734%"></div><div class="bar keris" style="width:68.75452380879527%"></div></div><span class="legend">Py 1× / Keris 2.2×</span></div>
   </div>
   <h2>Times (median of 5 runs)</h2>
   <table>
     <tr><th>Benchmark</th><th>Keris</th><th>Python</th><th>Keris / Python</th></tr>
-        <tr><td>Fibonacci (recursive, fib(30))</td><td>85.04 ms</td><td>95.12 ms</td><td>0.9×</td></tr>
-        <tr><td>Factorial (recursive, fact(100))</td><td>0.01 ms</td><td>0.01 ms</td><td>1.6×</td></tr>
-        <tr><td>Loop (sum 0..199999)</td><td>18.32 ms</td><td>7.04 ms</td><td>2.6×</td></tr>
+        <tr><td>Fibonacci (recursive, fib(30))</td><td>83.68 ms</td><td>95.07 ms</td><td>0.9×</td></tr>
+        <tr><td>Factorial (recursive, fact(100))</td><td>0.01 ms</td><td>0.01 ms</td><td>1.1×</td></tr>
+        <tr><td>Loop (sum 0..199999)</td><td>16.62 ms</td><td>7.55 ms</td><td>2.2×</td></tr>
   </table>
   <p class="note">Run <code>python run_benchmarks.py</code> to regenerate. All benchmarks use the same algorithms in both languages.</p>
 </body>
