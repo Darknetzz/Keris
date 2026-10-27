@@ -1,5 +1,8 @@
 # Keris Programming Language
 
+<p align="center"><img src="docs/images/banner-gradient.png" alt="Keris" width="720"></p>
+
+
 <div align="center">
 
 <img src="img/keris.png" alt="Keris Logo" width="200">
